@@ -91,8 +91,13 @@ Berikut yang harus kamu ikuti untuk menjalankan app ini:
     ```bash
     pip install pycryptodome
     ```
-
-14. Jalan kan server
+14. Makemigrations Database
+    ```bash
+    python manage.py makemigrations users
+    python manage.py migrate
+    ```
+    
+16. Jalan kan server
     ```bash
     python manage.py runserver
     ```
