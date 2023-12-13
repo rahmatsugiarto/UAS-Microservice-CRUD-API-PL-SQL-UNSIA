@@ -6,3 +6,4 @@ class Users(models.Model):
     gender = models.CharField(max_length=30)
     username = models.CharField(max_length=100)
     password = models.CharField(max_length=300)
+    token = models.TextField(null=True, blank=True)
