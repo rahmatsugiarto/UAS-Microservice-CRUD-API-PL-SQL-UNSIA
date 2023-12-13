@@ -11,6 +11,7 @@ from rest_framework import status
 
 class AuthViewset(APIView):
     def post(self, request):
+        print('Running post login----------')
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
         usernameBody = body["username"]
@@ -32,6 +33,8 @@ class AuthViewset(APIView):
                     "password" : userData.password,
                     "token" : token,
                   }
+                print("userData=")
+                print(userData)
         
                 serializer = serializers.UsersSerializer(item, data=data, partial=True)
                 

@@ -141,7 +141,6 @@ class UsersByPassViewset(APIView):
             "password" : passwordEncrypt,
         }
         serializer = serializers.UsersSerializer(data = data)
-        
         if existingUser:
             return Response({"status": "error", "message": "Username already exists, please use another username"}, status=status.HTTP_400_BAD_REQUEST)
         elif serializer.is_valid():

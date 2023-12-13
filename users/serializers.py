@@ -6,4 +6,4 @@ class UsersSerializer(serializers.ModelSerializer):
         model = Users
         # field = ('id', 'mobile', 'fullname')
         # fields = '__all__'
-        fields = ['id', 'name', 'gender', 'username']
+        fields = ['id', 'name', 'gender', 'username', 'password', "token"]
