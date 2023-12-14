@@ -72,25 +72,11 @@ Berikut yang harus kamu ikuti untuk menjalankan app ini:
     deactivate
     ```
 
-10. Install django
+10. Install requirement dengan command:
     ```bash
-    pip install django
+    pip install -r requirements.txt
     ```
-
-11. Install djangorestframework
-    ```bash
-    pip install djangorestframework
-    ```
-
-12. Install psycopg2
-    ```bash
-    pip install psycopg2
-    ```
-
-13. Install pycryptodome
-    ```bash
-    pip install pycryptodome
-    ```
+    
 14. Makemigrations Database
     ```bash
     python manage.py makemigrations users
