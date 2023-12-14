@@ -11,7 +11,6 @@ from rest_framework import status
 
 class AuthViewset(APIView):
     def post(self, request):
-        print('Running post login----------')
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
         usernameBody = body["username"]
@@ -27,20 +26,26 @@ class AuthViewset(APIView):
                 item = models.Users.objects.get(id=userData.id)
                 
                 data = {
+                    "id": userData.id,
                     "name" : userData.name,
                     "gender" : userData.gender,
                     "username" : userData.username,
                     "password" : userData.password,
                     "token" : token,
                   }
-                print("userData=")
-                print(userData)
         
                 serializer = serializers.UsersSerializer(item, data=data, partial=True)
                 
                 if serializer.is_valid():
                      serializer.save()
-                     return Response({"status": "success", "message": "Successful login", "token": token},status=status.HTTP_200_OK)
+                     data.pop("password")
+                     data.pop("token")
+                     return Response({
+                         "status": "success", 
+                         "message": "Successful login", 
+                         "token": token,
+                         "user": data},
+                         status=status.HTTP_200_OK)
                 else:
                     return Response({"status": "error", "message":"Error" }, status=status.HTTP_400_BAD_REQUEST)
 
