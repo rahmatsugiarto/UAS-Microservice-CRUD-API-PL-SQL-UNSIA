@@ -18,8 +18,6 @@ class UsersViewset(APIView):
                 user = models.Users.objects.get(id=id)
                 serializer = serializers.UsersSerializer(user)
                 serializer_data = serializer.data
-                serializer_data.pop("password")
-                serializer_data.pop("token")
                 return Response({
                     "status": "success",
                     "data": serializer_data},
@@ -30,9 +28,6 @@ class UsersViewset(APIView):
                 users = models.Users.objects.all().order_by('id')
                 serializer = serializers.UsersSerializer(users, many=True)
                 serializer_data = serializer.data
-                for data in serializer_data:
-                    data.pop("password")
-                    data.pop("token")
                 return Response({
                     "status": "success",
                     "data": serializer_data},
@@ -68,8 +63,6 @@ class UsersViewset(APIView):
         elif serializer.is_valid():
             serializer.save()
             serialized_data = serializer.data
-            serialized_data.pop('password', None)
-            serialized_data.pop('token', None)
             return Response({"status": "success","message": "Successfully created a user account", "data": serialized_data}, status=status.HTTP_201_CREATED)
         else:
             return Response({"status": "error", "data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
@@ -111,9 +104,7 @@ class UsersViewset(APIView):
                 return Response({"status": "error", "message": "Username already exists, please use another username"}, status=status.HTTP_400_BAD_REQUEST)
             elif serializer.is_valid():
                 serializer.save()
-                serializer_data = serializer.data
-                serializer_data.pop("password", None)
-                serializer_data.pop("token", None)
+                serializer_data = serializer.initial_data
                 return Response({"status": "success", "data": serializer_data}, status=status.HTTP_200_OK)
             else:
                 return Response({"status": "error", "data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
