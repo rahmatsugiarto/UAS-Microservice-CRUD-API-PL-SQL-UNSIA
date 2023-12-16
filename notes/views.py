@@ -97,4 +97,83 @@ class NotesViewset(APIView):
                 "status": "error", 
                 "message": str(e)}, 
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    def patch(self, request):
+        id = request.GET.get('id')
+        is_authorized = request.headers.get('Authorization')
+
+        try:
+            if is_authorized:
+                existingId = Note.objects.filter(id=id).exists()
+                if existingId == False:
+                    return Response({
+                        "status": "error", 
+                        "message": "Note does not exist"})  
+
+                item = Note.objects.get(id=id)
+
+                body_unicode = request.body.decode('utf-8')
+                body = json.loads(body_unicode)
+
+                data = {
+                    "title" : body["title"],
+                    "content" : body["content"],
+                }
+
+                serializer = NotesSerializer(item, data=data, partial=True)
+
+                if serializer.is_valid():
+                    serializer.save()
+                    serializer_data = serializer.initial_data
+                    return Response({
+                        "status": "success", 
+                        "data": serializer_data}, 
+                        status=status.HTTP_200_OK)
+                else:
+                    return Response({
+                        "status": "error", 
+                        "data": serializer.errors}, 
+                        status=status.HTTP_400_BAD_REQUEST)
             
+            else:
+                return Response({
+                    "status": "error",
+                    "message": "invalid token."}, 
+                    status=status.HTTP_401_UNAUTHORIZED)
+        except Exception as e:
+            return Response({
+                "status": "error", 
+                "message": str(e)}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+    def delete(self, request):
+        id = request.GET.get('id')
+        is_authorized = request.headers.get('Authorization')
+        
+        try:
+            if is_authorized:
+                existingId = Note.objects.filter(id=id).exists()
+
+                if existingId:
+                    item = Note.objects.filter(id=id)
+                    item.delete()
+                    return Response({
+                        "status": "success", 
+                        "message": "Note deleted"})
+                else:
+                    return Response({
+                        "status": "error", 
+                        "message": "Note does not exist"})   
+            
+            else:
+                return Response({
+                    "status": "error",
+                    "message": "invalid token."}, 
+                    status=status.HTTP_401_UNAUTHORIZED)
+        
+        except Exception as e:
+            return Response({
+                "status": "error", 
+                "message": str(e)}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR)

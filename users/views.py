@@ -36,9 +36,9 @@ class UsersViewset(APIView):
                 
         except Exception as e:
             return Response({
-                    "status": "error", 
-                    "message": str(e)}, 
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                "status": "error", 
+                "message": str(e)}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         
         
@@ -59,13 +59,23 @@ class UsersViewset(APIView):
         serializer = serializers.UsersSerializer(data = data)
 
         if existingUser:
-            return Response({"status": "error", "message": "Username already exists, please use another username"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({
+                "status": "error", 
+                "message": "Username already exists, please use another username"}, 
+                status=status.HTTP_400_BAD_REQUEST)
         elif serializer.is_valid():
             serializer.save()
             serialized_data = serializer.data
-            return Response({"status": "success","message": "Successfully created a user account", "data": serialized_data}, status=status.HTTP_201_CREATED)
+            return Response({
+                "status": "success",
+                "message": "Successfully created a user account", 
+                "data": serialized_data}, 
+                status=status.HTTP_201_CREATED)
         else:
-            return Response({"status": "error", "data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({
+                "status": "error", 
+                "data": serializer.errors}, 
+                status=status.HTTP_400_BAD_REQUEST)
         # else:
         #     return Response({"status": "error","message": "invalid token."}, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -76,7 +86,9 @@ class UsersViewset(APIView):
         if authorization_header:
             existingId = models.Users.objects.filter(id=id).exists()
             if existingId == False:
-                return Response({"status": "error", "message": "Users does not exist"})  
+                return Response({
+                    "status": "error", 
+                    "message": "Users does not exist"})  
 
             item = models.Users.objects.get(id=id)
 
@@ -101,16 +113,29 @@ class UsersViewset(APIView):
             serializer = serializers.UsersSerializer(item, data=data, partial=True)
 
             if existingUser:
-                return Response({"status": "error", "message": "Username already exists, please use another username"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({
+                    "status": "error", 
+                    "message": "Username already exists, please use another username"}, 
+                    status=status.HTTP_400_BAD_REQUEST)
             elif serializer.is_valid():
                 serializer.save()
                 serializer_data = serializer.initial_data
-                return Response({"status": "success", "data": serializer_data}, status=status.HTTP_200_OK)
+                return Response({
+                    "status": "success", 
+                    "data": serializer_data}, 
+                    status=status.HTTP_200_OK)
             else:
-                return Response({"status": "error", "data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({
+                    "status": "error", 
+                    "data": serializer.errors}, 
+                    status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response({"status": "error","message": "invalid token."}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({
+                "status": "error",
+                "message": "invalid token."}, 
+                status=status.HTTP_401_UNAUTHORIZED)
         
+
     def delete(self, request):
         id = request.GET.get("id")
         authorization_header = request.headers.get('Authorization')
@@ -119,13 +144,19 @@ class UsersViewset(APIView):
 
             if existingId:
                 item = models.Users.objects.filter(id=id)
-                print(item)
                 item.delete()
-                return Response({"status": "success", "message": "Users Deleted"})  
+                return Response({
+                    "status": "success", 
+                    "message": "Users deleted"})  
             else:
-                return Response({"status": "error", "message": "Users does not exist"})  
+                return Response({
+                    "status": "error", 
+                    "message": "Users does not exist"})  
         else:
-            return Response({"status": "error","message": "invalid token."}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({
+                    "status": "error",
+                    "message": "invalid token."}, 
+                    status=status.HTTP_401_UNAUTHORIZED)
         
         
         
