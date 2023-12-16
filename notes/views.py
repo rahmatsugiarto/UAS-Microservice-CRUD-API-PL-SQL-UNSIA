@@ -100,10 +100,13 @@ class NotesViewset(APIView):
         
     def patch(self, request):
         id = request.GET.get('id')
-        is_authorized = request.headers.get('Authorization')
+        authorization_header = request.headers.get('Authorization')
+        is_login = False
+        if authorization_header != None:
+            is_login = Users.objects.filter(token=authorization_header).exists()
 
         try:
-            if is_authorized:
+            if is_login:
                 existingId = Note.objects.filter(id=id).exists()
                 if existingId == False:
                     return Response({
@@ -149,10 +152,13 @@ class NotesViewset(APIView):
 
     def delete(self, request):
         id = request.GET.get('id')
-        is_authorized = request.headers.get('Authorization')
+        authorization_header = request.headers.get('Authorization')
+        is_login = False
+        if authorization_header != None:
+            is_login = Users.objects.filter(token=authorization_header).exists()
         
         try:
-            if is_authorized:
+            if is_login:
                 existingId = Note.objects.filter(id=id).exists()
 
                 if existingId:

@@ -82,8 +82,11 @@ class UsersViewset(APIView):
     def patch(self, request):
         id = request.GET.get("id")
         authorization_header = request.headers.get('Authorization')
+        is_login = False
+        if authorization_header != None:
+            is_login = models.Users.objects.filter(token=authorization_header).exists()
         
-        if authorization_header:
+        if is_login:
             existingId = models.Users.objects.filter(id=id).exists()
             if existingId == False:
                 return Response({
@@ -139,7 +142,12 @@ class UsersViewset(APIView):
     def delete(self, request):
         id = request.GET.get("id")
         authorization_header = request.headers.get('Authorization')
-        if authorization_header:
+        is_login = False
+        if authorization_header != None:
+            is_login = models.Users.objects.filter(token=authorization_header).exists()
+        
+
+        if is_login:
             existingId = models.Users.objects.filter(id=id).exists()
 
             if existingId:
