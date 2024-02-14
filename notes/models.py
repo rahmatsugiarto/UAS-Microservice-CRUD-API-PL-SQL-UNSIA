@@ -11,3 +11,8 @@ class Note(models.Model):
 
     def __str__(self):
         return self.title
+    
+class NoteLogger(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    method = models.CharField(max_length=10)
+    message = models.TextField()

@@ -7,6 +7,7 @@ from users.helper import AESDecrypt
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from .models import AuthenticationLogger
 
 
 class AuthViewset(APIView):
@@ -14,7 +15,7 @@ class AuthViewset(APIView):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
         usernameBody = body["username"]
-        passwordBody = (body["password"])
+        passwordBody = body["password"]
         
         existingUser = models.Users.objects.filter(username=usernameBody).exists()
         if existingUser:
@@ -40,6 +41,8 @@ class AuthViewset(APIView):
                      serializer.save()
                      data.pop("password")
                      data.pop("token")
+                     AuthenticationLogger.objects.create(
+                         method="POST", message="Login with username: " + usernameBody)
                      return Response({
                          "status": "success", 
                          "message": "Successful login", 
@@ -50,6 +53,8 @@ class AuthViewset(APIView):
                     return Response({"status": "error", "message":"Error" }, status=status.HTTP_400_BAD_REQUEST)
 
             else:
+                AuthenticationLogger.objects.create(
+                    method="POST", message="Attempting to login with username: " + usernameBody + " but wrong password")
                 return Response({"status": "error", "message":"Password wrong" }, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({"status": "error", "message":"Username does not exist" }, status=status.HTTP_400_BAD_REQUEST)

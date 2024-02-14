@@ -2,7 +2,7 @@ import json
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Note
+from .models import Note, NoteLogger
 from users.models import Users
 from .serializers import NotesSerializer
 from users.serializers import UsersSerializer
@@ -18,6 +18,9 @@ class NotesViewset(APIView):
                 if id:
                     # Get specific notes
                     note = Note.objects.get(id=id)
+                    NoteLogger.objects.create(
+                        method="GET", message="Get note with id: " + str(id))
+            
                     if note.user.id != user.id:
                         return Response({
                             "status": "failed",
@@ -33,6 +36,8 @@ class NotesViewset(APIView):
                 else:
                     # Get all notes
                     notes = Note.objects.filter(user=user.id)
+                    NoteLogger.objects.create(
+                        method="GET", message="Get all notes")
                     serializer = NotesSerializer(notes, many=True)
                     serializer_data = serializer.data
                     for data in serializer_data:
@@ -73,6 +78,8 @@ class NotesViewset(APIView):
 
                 if serializer.is_valid():
                     serializer.save()
+                    NoteLogger.objects.create(
+                        method="POST", message="Save note with title: " + body["title"] + " by user: " + user.id)
                     serialized_data = serializer.data
                     return Response({
                         "status": "success",
@@ -115,6 +122,9 @@ class NotesViewset(APIView):
 
                 item = Note.objects.get(id=id)
 
+                itemOldTitle = item.title
+                itemOldContent = item.content
+
                 body_unicode = request.body.decode('utf-8')
                 body = json.loads(body_unicode)
 
@@ -127,6 +137,13 @@ class NotesViewset(APIView):
 
                 if serializer.is_valid():
                     serializer.save()
+                    if(itemOldTitle != body["title"]):
+                        NoteLogger.objects.create(
+                            method="PATCH", message="Update note title with id: " + id + " from " + itemOldTitle + " to " + body["title"])
+                    if(itemOldContent != body["content"]):
+                        NoteLogger.objects.create(
+                            method="PATCH", message="Update note content with id: " + id + " from " + itemOldContent + " to " + body["content"])
+                        
                     serializer_data = serializer.initial_data
                     return Response({
                         "status": "success", 
@@ -164,6 +181,9 @@ class NotesViewset(APIView):
                 if existingId:
                     item = Note.objects.filter(id=id)
                     item.delete()
+                    NoteLogger.objects.create(
+                        method="DELETE", 
+                        message="Delete note with id: " + id + " and title: " + item.title + " by user: " + item.user.id)
                     return Response({
                         "status": "success", 
                         "message": "Note deleted"})
