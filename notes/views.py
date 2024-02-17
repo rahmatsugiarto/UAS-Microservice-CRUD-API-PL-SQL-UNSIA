@@ -79,7 +79,7 @@ class NotesViewset(APIView):
                 if serializer.is_valid():
                     serializer.save()
                     NoteLogger.objects.create(
-                        method="POST", message="Save note with title: " + body["title"] + " by user: " + user.id)
+                        method="POST", message="Save note with title: " + body["title"] + " by user: " + str(user.id))
                     serialized_data = serializer.data
                     return Response({
                         "status": "success",
@@ -179,11 +179,12 @@ class NotesViewset(APIView):
                 existingId = Note.objects.filter(id=id).exists()
 
                 if existingId:
-                    item = Note.objects.filter(id=id)
-                    item.delete()
+                    item = Note.objects.get(id=id)
+                    
                     NoteLogger.objects.create(
                         method="DELETE", 
-                        message="Delete note with id: " + id + " and title: " + item.title + " by user: " + item.user.id)
+                        message="Delete note with id: " + id + " and title: " + item.title + " by user: " + str(item.user.id))
+                    item.delete()   
                     return Response({
                         "status": "success", 
                         "message": "Note deleted"})
