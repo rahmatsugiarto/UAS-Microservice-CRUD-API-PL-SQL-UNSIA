@@ -2,8 +2,8 @@
 # UAS Microservice CRUD API PL/SQL UNSIA
 
 Sebuah project app API CRUD menggunakan framework Django REST Framework (DRF) dan PostgreSQL.
-- [Document Text](https://drive.google.com/file/d/1hu6VQ-laLVIq8oaTdnS0H_yrRSwCl0zI/view?usp=drive_link)
-- [Document Postman](https://drive.google.com/drive/folders/1IQTpZ_VNiW3fGSZRT8hGHfSxMt10Ff1w?usp=sharing)
+- [Dokumen & SDLC](https://drive.google.com/file/d/1hu6VQ-laLVIq8oaTdnS0H_yrRSwCl0zI/view?usp=drive_link)
+- [Dokumen Postman](https://drive.google.com/drive/folders/1IQTpZ_VNiW3fGSZRT8hGHfSxMt10Ff1w?usp=sharing)
 
 
 ## How to Run
